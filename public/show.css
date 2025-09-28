@@ -1,0 +1,44 @@
+/* show.css */
+body {
+    font-family: 'Georgia', serif;
+    background: #f5f5f5;
+    padding: 30px;
+}
+
+.post-container {
+    max-width: 700px;
+    margin: auto;
+}
+
+.post-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.post-card h1 {
+    color: #5e35b1;
+    text-align: center;
+}
+
+.user {
+    font-style: italic;
+    font-size: 1.2rem;
+    color: #444;
+}
+
+.post-content {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.back-btn {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #5e35b1;
+    font-weight: bold;
+    text-decoration: underline;
+}
