@@ -14,10 +14,53 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "../public")));
 
 let posts = [
-  { id: uuidv4(), username: "Nisheel", content: "Hii how are you?" },
-  { id: uuidv4(), username: "Anish", content: "Hello" },
-  { id: uuidv4(), username: "Rahul", content: "Hardworker" },
+    {
+        id: uuidv4(),
+        username: "Oscar Wilde",
+        content: "Be yourself; everyone else is already taken."
+    },
+    {
+        id: uuidv4(),
+        username: "Steve Jobs",
+        content: "Stay hungry. Stay foolish."
+    },
+    {
+        id: uuidv4(),
+        username: "Rosa Nouchette Carey",
+        content: "Do it with passion or not at all."
+    },
+    {
+        id: uuidv4(),
+        username: "Latin Proverb",
+        content: "Fortune favors the bold."
+    },
+    {
+        id: uuidv4(),
+        username: "George Bernard Shaw",
+        content: "Life isn’t about finding yourself. It’s about creating yourself."
+    },
+    {
+        id: uuidv4(),
+        username: "D.H. Sidebottom",
+        content: "Stars can’t shine without darkness."
+    },
+    {
+        id: uuidv4(),
+        username: "Sam Levenson",
+        content: "Don’t watch the clock; do what it does. Keep going."
+    },
+    {
+        id: uuidv4(),
+        username: "George Bernard Shaw",
+        content: "Don’t wait for opportunity. Create it."
+    },
+    {
+        id: uuidv4(),
+        username: "Robert Collier",
+        content: "Success is the sum of small efforts repeated day in and day out."
+    }
 ];
+
 
 app.get("/", (req, res) => res.redirect("/posts"));
 
