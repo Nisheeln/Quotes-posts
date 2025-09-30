@@ -1,9 +1,11 @@
+require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const path = require("path");
 
-const Post = require("./models/Post");
+
+const Post = require("../models/Post");
 
 const app = express();
 
@@ -12,12 +14,9 @@ const app = express();
 // Example: mongodb+srv://<username>:<password>@cluster0.abcde.mongodb.net/postsApp
 const MONGO_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ MongoDB Atlas Connected"))
-.catch(err => console.error("❌ MongoDB connection error:", err));
+mongoose.connect(MONGO_URI)
+    .then(() => console.log("✅ MongoDB Atlas Connected"))
+    .catch(err => console.error("❌ MongoDB connection error:", err));
 
 // ===== Middleware =====
 app.use(express.urlencoded({ extended: true }));
@@ -80,5 +79,8 @@ app.delete("/posts/:id", async (req, res) => {
   await Post.findByIdAndDelete(req.params.id);
   res.redirect("/posts");
 });
+const PORT = process.env.PORT || 3000;
 
-module.exports = app;
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on port ${PORT}`);
+});
