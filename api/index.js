@@ -1,99 +1,83 @@
 const express = require("express");
-const { v4: uuidv4 } = require("uuid");
+const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const path = require("path");
 
+const Post = require("./models/Post");
+
 const app = express();
 
+// ===== Database Connection (Atlas) =====
+// Use environment variable (set in Vercel Dashboard)
+// Example: mongodb+srv://<username>:<password>@cluster0.abcde.mongodb.net/postsApp
+const MONGO_URI = process.env.MONGODB_URI;
+
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("✅ MongoDB Atlas Connected"))
+.catch(err => console.error("❌ MongoDB connection error:", err));
+
+// ===== Middleware =====
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
 
+// ⚠️ On Vercel, server-side rendering with EJS is tricky
+// If you want to keep EJS, you must serve it via Express
+// Vercel works better with JSON APIs or Next.js frontend
 app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "../public")));
 
-let posts = [
-    {
-        id: uuidv4(),
-        username: "Oscar Wilde",
-        content: "Be yourself; everyone else is already taken."
-    },
-    {
-        id: uuidv4(),
-        username: "Steve Jobs",
-        content: "Stay hungry. Stay foolish."
-    },
-    {
-        id: uuidv4(),
-        username: "Rosa Nouchette Carey",
-        content: "Do it with passion or not at all."
-    },
-    {
-        id: uuidv4(),
-        username: "Latin Proverb",
-        content: "Fortune favors the bold."
-    },
-    {
-        id: uuidv4(),
-        username: "George Bernard Shaw",
-        content: "Life isn’t about finding yourself. It’s about creating yourself."
-    },
-    {
-        id: uuidv4(),
-        username: "D.H. Sidebottom",
-        content: "Stars can’t shine without darkness."
-    },
-    {
-        id: uuidv4(),
-        username: "Sam Levenson",
-        content: "Don’t watch the clock; do what it does. Keep going."
-    },
-    {
-        id: uuidv4(),
-        username: "George Bernard Shaw",
-        content: "Don’t wait for opportunity. Create it."
-    },
-    {
-        id: uuidv4(),
-        username: "Robert Collier",
-        content: "Success is the sum of small efforts repeated day in and day out."
-    }
-];
-
-
+// ===== Routes =====
 app.get("/", (req, res) => res.redirect("/posts"));
 
-app.get("/posts", (req, res) => res.render("index.ejs", { posts }));
-
-app.get("/posts/new", (req, res) => res.render("new.ejs"));
-
-app.get("/posts/:id", (req, res) => {
-  const post = posts.find((p) => p.id === req.params.id);
-  if (post) return res.render("show.ejs", { post });
-  res.status(404).send("Not a valid id");
+// Show all posts
+app.get("/posts", async (req, res) => {
+  const posts = await Post.find({});
+  res.render("index.ejs", { posts });
 });
 
-app.post("/posts", (req, res) => {
+// New post form
+app.get("/posts/new", (req, res) => res.render("new.ejs"));
+
+// Show single post
+app.get("/posts/:id", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send("Not a valid id");
+    res.render("show.ejs", { post });
+  } catch {
+    res.status(404).send("Not a valid id");
+  }
+});
+
+// Create new post
+app.post("/posts", async (req, res) => {
   const { username, content } = req.body;
-  posts.push({ id: uuidv4(), username, content });
+  await Post.create({ username, content });
   res.redirect("/posts");
 });
 
-app.get("/posts/:id/edit", (req, res) => {
-  const post = posts.find((p) => p.id === req.params.id);
+// Edit form
+app.get("/posts/:id/edit", async (req, res) => {
+  const post = await Post.findById(req.params.id);
   if (!post) return res.status(404).send("Post not found");
   res.render("update.ejs", { post });
 });
 
-app.patch("/posts/:id", (req, res) => {
-  const post = posts.find((p) => p.id === req.params.id);
-  if (post) post.content = req.body.content;
+// Update post
+app.patch("/posts/:id", async (req, res) => {
+  const { content } = req.body;
+  await Post.findByIdAndUpdate(req.params.id, { content });
   res.redirect("/posts");
 });
 
-app.delete("/posts/:id", (req, res) => {
-  posts = posts.filter((p) => p.id !== req.params.id);
+// Delete post
+app.delete("/posts/:id", async (req, res) => {
+  await Post.findByIdAndDelete(req.params.id);
   res.redirect("/posts");
 });
 
