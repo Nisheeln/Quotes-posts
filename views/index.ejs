@@ -9,7 +9,15 @@
 <body>
     <header>
         <h1>Quora Posts</h1>
-        <a class="create-btn" href="/posts/new">+ Create New Post</a>
+        <nav>
+            <% if (isAuthenticated) { %>
+                <a class="create-btn" href="/posts/new">+ Create New Post</a>
+                <a class="logout-btn" href="/logout">Logout</a>
+            <% } else { %>
+                <a class="login-btn" href="/login">Login</a>
+                <a class="signup-btn" href="/signup">Signup</a>
+            <% } %>
+        </nav>
     </header>
 
     <main class="posts-container">
